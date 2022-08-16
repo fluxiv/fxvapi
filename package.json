@@ -1,0 +1,19 @@
+{
+  "name": "fxvapi",
+  "version": "1.0.0",
+  "description": "The New Fluxiv API",
+  "main": "index.js",
+  "scripts": {
+    "go": "nodemon index.js"
+  },
+  "author": "Fluxiv",
+  "license": "GPL",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.19"
+  }
+}
