@@ -1,3 +1,6 @@
+const userRoute = require('./routes/user_router')
+
+
 const exp = require('express')
 const app = exp()
 const cors = require('cors')
@@ -35,3 +38,4 @@ app.listen(process.env.PORT,()=>{
 app.get('/',(req,res) => {
     res.send('eu rodo')
 })
+app.use('/user',userRoute)
