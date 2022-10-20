@@ -1,13 +1,15 @@
-const userRoute = require('./routes/user_router')
+import {user} from './routes/user_router'
 
+import express from 'express'
 
-const exp = require('express')
-const app = exp()
+import { Request, Response } from 'express';
+
+const app = express();
+
+app.use(express.json())
 const cors = require('cors')
 const mysql = require('mysql')
 
-app.use(cors())
-app.use(exp.json())
 require("dotenv").config({
     allowEmptyValues: true
 })
@@ -20,7 +22,7 @@ var sql = mysql.createConnection({
     multipleStatements: true
 })
 
-sql.connect((err)=>{
+sql.connect((err:any)=>{
     if(!err){
         console.log('API FXV CONNECTED');
         console.log(`Run FXV api on http://localhost:${process.env.PORT}`)
@@ -35,7 +37,7 @@ app.listen(process.env.PORT,()=>{
     console.log(`Rodando na porta ${process.env.PORT}`)
 })
 
-app.get('/',(req,res) => {
+app.get('/',(req:Request,res:Response) => {
     res.send('eu rodo')
 })
-app.use('/user',userRoute)
+app.use('/user',user)
