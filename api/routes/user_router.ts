@@ -1,9 +1,13 @@
 import { Router, Request, Response } from 'express'
 import {userModels} from '../models/users_models'
+import * as dotenv from "dotenv";
+import { nanoid } from 'nanoid'
 const mysql = require('mysql')
-require("dotenv").config({
-    allowEmptyValues: true
-})
+dotenv.config({ path: __dirname+'/.env' });
+
+// require("dotenv").config({
+//     allowEmptyValues: true
+// })
 var mysqlconnect = mysql.createConnection({
     host: process.env.HOST,
     user:  process.env.USER,
@@ -12,7 +16,7 @@ var mysqlconnect = mysql.createConnection({
     multipleStatements: true
 })
 export const user = Router();
-const { nanoid } = require('nanoid')
+// const { nanoid } = require('nanoid')
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')

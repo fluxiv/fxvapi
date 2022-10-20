@@ -1,7 +1,8 @@
 import {user} from './routes/user_router'
 
 import express from 'express'
-
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname+'/.env' });
 import { Request, Response } from 'express';
 
 const app = express();
@@ -10,9 +11,6 @@ app.use(express.json())
 const cors = require('cors')
 const mysql = require('mysql')
 
-require("dotenv").config({
-    allowEmptyValues: true
-})
 
 var sql = mysql.createConnection({
     host: process.env.HOST,
