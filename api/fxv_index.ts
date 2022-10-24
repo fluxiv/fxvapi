@@ -9,7 +9,7 @@ const app = express();
 
 app.use(express.json())
 const cors = require('cors')
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 
 var sql = mysql.createConnection({
@@ -26,7 +26,7 @@ sql.connect((err:any)=>{
         console.log(`Run FXV api on http://localhost:${process.env.PORT}`)
     }
     else{
-        console.log('SOMETHING WRONG');
+        console.log(err);
         console.log('Connect to you database')
     }
 })
