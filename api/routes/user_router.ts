@@ -63,3 +63,39 @@ user.post('/postUser',(req:Request,res:Response) => {
     //res.send(params)
 })
 
+user.post('/loginUser', (req:Request, res:Response) => {
+    var params = req.body
+    let query = `Select * from users where email = ?`
+    sqlconn.query (query, [
+        params.email
+    ], (err:any, rows:any) => {
+        if (!err) {
+            if(rows.length == 0) {
+                res.status(404).json({
+                    msg:"Email not found!"
+                })
+            }else {
+                let dados = rows[0]
+                let match = bcrypt.compareSync(params.password, dados.password)
+                if(match == true) {
+                    delete dados.password
+                    res.status(200).json ({
+                        msg:"Ok!",
+                        data: dados
+                    })
+                } else {
+                    res.status(401).json({
+                        msg:"Error, password not match!"
+                    })
+                }
+            }
+        }
+        else {
+            res.status(400).json({
+                msg: "error!",
+                error:err
+            })
+        }
+    })
+})
+
