@@ -32,7 +32,7 @@ user.post('/postUser',(req:Request,res:Response) => {
         params.name,
         params.birthday,
         params.email,
-        params.password,
+        hash,
          0
      )
     let query = `Insert into users (id, email, password, birthday, name, isPremium) values (?,?,?,?,?,?)`
