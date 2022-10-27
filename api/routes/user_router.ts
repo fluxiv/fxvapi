@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express'
+import e, { Router, Request, Response } from 'express'
 import {userModels} from '../models/users_models'
 import * as dotenv from "dotenv";
 import { nanoid } from 'nanoid'
@@ -79,9 +79,11 @@ user.post('/loginUser', (req:Request, res:Response) => {
                 let match = bcrypt.compareSync(params.password, dados.password)
                 if(match == true) {
                     delete dados.password
+                    const token = generateAccessToken(params);
                     res.status(200).json ({
                         msg:"Ok!",
-                        data: dados
+                        data: dados,
+                        token:token
                     })
                 } else {
                     res.status(401).json({
@@ -97,5 +99,45 @@ user.post('/loginUser', (req:Request, res:Response) => {
             })
         }
     })
+       
 })
+
+user.post("/getUserById", authenticateToken,  (req:Request, res:Response) => {
+    let query = `Select * From users where id = ?`
+    sqlconn.query(query, [
+        req.body.id
+    ], (err: any, rows:any) => {
+        if(!err) 
+            res.status(200).json({msg: "Ok!", data:rows})
+        else
+            res.status(400).json({msg: "Error!", error:err})
+    })
+})
+
+function generateAccessToken(param: string) {
+    return jwt.sign(param, process.env.TOKEN);
+}
+
+function authenticateToken(req:Request, res:Response, next:any) {
+    const token = req.headers['x-authorization'];
+
+    if(token == null) {
+        return res.status(401).json({msg: "No token provided."});
+    }
+
+    jwt.verify(token, process.env.TOKEN as string, (err: any, user: any) => {
+        console.log(err);
+        if(err) 
+            return res.status(403).json({msg: "Failed to authenticate token."});
+            
+            next();
+        
+    })
+
+    
+}
+
+
+
+
 
