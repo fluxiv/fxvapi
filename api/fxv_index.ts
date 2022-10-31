@@ -7,9 +7,10 @@ import { Request, Response } from 'express';
 
 const app = express();
 
-app.use(express.json())
 const cors = require('cors')
 const mysql = require('mysql2')
+app.use(cors())
+app.use(express.json())
 
 
 var sql = mysql.createConnection({
