@@ -1,7 +1,10 @@
-import e, { Router, Request, Response } from 'express'
-import {userModels} from '../models/users_models'
+import e, { Router, Request, Response } from 'express';
+import {userModels} from '../models/users_models';
 import * as dotenv from "dotenv";
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 const mysql = require('mysql2')
 dotenv.config({ path: __dirname+'/./../.env' });
 
@@ -15,6 +18,22 @@ var sqlconn = mysql.createConnection({
     database: process.env.DB,
     multipleStatements: true
 })
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const myPath = path.join(__dirname, `../../uploads/${req.body.Id}`) 
+        fs.mkdirSync(myPath, {recursive:true})
+        cb(null, myPath)
+    },
+    filename(req, file, cb) {
+        const ext = file.originalname.split(".")[1]
+        const date = Date.now()
+        cb(null, `${req.body.Id}-${date}.${ext}`)
+    },
+})
+
+const upload = multer({storage})
+
 export const user = Router();
 // const { nanoid } = require('nanoid')
 
@@ -169,6 +188,9 @@ function authenticateToken(req:Request, res:Response, next:any) {
     
 }
 
+user.post("/uploadProfilePick", upload.single("photo"), (req:Request, res:Response) => {
+    res.json(req.body)
+})
 
 
 
