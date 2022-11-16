@@ -1,4 +1,4 @@
-import e, { Router, Request, Response } from 'express';
+import e, { Router, Request, Response, application } from 'express';
 import {userModels} from '../models/users_models';
 import * as dotenv from "dotenv";
 import { nanoid } from 'nanoid';
@@ -19,16 +19,20 @@ var sqlconn = mysql.createConnection({
     multipleStatements: true
 })
 
+var profilePath = "";
+
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        const myPath = path.join(__dirname, `../../uploads/${req.body.Id}`) 
+        const myPath = path.join(__dirname, `../../uploads/users/${req.body.Id}`) 
         fs.mkdirSync(myPath, {recursive:true})
         cb(null, myPath)
     },
     filename(req, file, cb) {
         const ext = file.originalname.split(".")[1]
         const date = Date.now()
-        cb(null, `${req.body.Id}-${date}.${ext}`)
+        let myFileName = `${req.body.Id}-${date}.${ext}`
+        profilePath = `/uploads/users/${req.body.Id}/` + myFileName
+        cb(null, myFileName)
     },
 })
 
@@ -189,8 +193,32 @@ function authenticateToken(req:Request, res:Response, next:any) {
 }
 
 user.post("/uploadProfilePick", upload.single("photo"), (req:Request, res:Response) => {
-    res.json(req.body)
+    let query = 'update users set photo = ? where id = ?'
+    sqlconn.query(query, [
+        profilePath, req.body.Id
+    ],(err: any, rows: any) => {
+        if(err) {
+            res.status(400).json({
+                msg: "Error!",
+                error:err
+            })
+        } else {
+            res.status(201).json({
+                msg: "Ok!"
+            })
+        }
+    })
 })
+
+const defaultImage = "uploads/default/avatar-image.jpg"
+user.get('/getImage', function(req:Request, res:Response){
+    let image: any = req.query.photo
+    res.sendFile(image, {root:'.'}, function(err: any){
+        if(err) {
+            res.sendFile(defaultImage, {root:'.'})
+        }
+    }) ;
+}); 
 
 
 
