@@ -144,12 +144,15 @@ user.post('/loginUser', (req:Request, res:Response) => {
 })
 
 user.post("/getUserById", authenticateToken,  (req:Request, res:Response) => {
+    console.log(req.query)
     let query = `Select * From users where id = ?`
     sqlconn.query(query, [
-        req.body.Id
+        req.query.id
     ], (err: any, rows:any) => {
-        if(!err) 
+        if(!err) {
+            delete rows[0].password
             res.status(200).json({msg: "Ok!", data:rows})
+        }
         else
             res.status(400).json({msg: "Error!", error:err})
     })
