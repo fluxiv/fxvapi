@@ -23,15 +23,15 @@ var profilePath = "";
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        const myPath = path.join(__dirname, `../../uploads/users/${req.body.Id}`) 
+        const myPath = path.join(__dirname, `../../uploads/users/${req.body.id}`) 
         fs.mkdirSync(myPath, {recursive:true})
         cb(null, myPath)
     },
     filename(req, file, cb) {
         const ext = file.originalname.split(".")[1]
         const date = Date.now()
-        let myFileName = `${req.body.Id}-${date}.${ext}`
-        profilePath = `/uploads/users/${req.body.Id}/` + myFileName
+        let myFileName = `${req.body.id}-${date}.${ext}`
+        profilePath = `/uploads/users/${req.body.id}/` + myFileName
         cb(null, myFileName)
     },
 })
@@ -197,8 +197,10 @@ function authenticateToken(req:Request, res:Response, next:any) {
 
 user.post("/uploadProfilePick", upload.single("photo"), (req:Request, res:Response) => {
     let query = 'update users set photo = ? where id = ?'
+    console.log(req.body)
+    console.log(profilePath)
     sqlconn.query(query, [
-        profilePath, req.body.Id
+        profilePath, req.body.id
     ],(err: any, rows: any) => {
         if(err) {
             res.status(400).json({
