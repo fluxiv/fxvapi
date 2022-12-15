@@ -1,4 +1,5 @@
 import {user} from './routes/user_router'
+import {feed} from './routes/feed_router'
 
 import express from 'express'
 import * as dotenv from "dotenv";
@@ -40,3 +41,4 @@ app.get('/',(req:Request,res:Response) => {
     res.send('eu rodo')
 })
 app.use('/user',user)
+app.use('/feed',feed)
