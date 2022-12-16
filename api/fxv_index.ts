@@ -40,5 +40,14 @@ app.listen(process.env.PORT,()=>{
 app.get('/',(req:Request,res:Response) => {
     res.send('eu rodo')
 })
+const defaultImage = "uploads/default/avatar-image.jpg"
+app.get('/getImage', function(req:Request, res:Response){
+    let image: any = req.query.photo
+    res.sendFile(image, {root:'.'}, function(err: any){
+        if(err) {
+            res.sendFile(defaultImage, {root:'.'})
+        }
+    }) ;
+}); 
 app.use('/user',user)
 app.use('/feed',feed)
