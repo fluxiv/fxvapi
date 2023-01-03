@@ -7,6 +7,8 @@ import path from 'path';
 import fs from 'fs';
 const mysql = require('mysql2')
 dotenv.config({ path: __dirname+'/./../.env' });
+const RateLimit = require('express-rate-limit');
+const xss = require('xss-clean');
 
 // require("dotenv").config({
 //     allowEmptyValues: true
@@ -18,6 +20,12 @@ var sqlconn = mysql.createConnection({
     database: process.env.DB,
     multipleStatements: true
 })
+
+var rateLimiter = new RateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 100, // limit each IP to 100 requests per windowMs
+    delayMs: 0 // disable delaying - full speed until the max limit is reached
+  });
 
 var profilePath = "";
 
@@ -47,8 +55,8 @@ const bcrypt = require('bcryptjs')
 var salt = bcrypt.genSaltSync(10)
 
 
-user.post('/postUser',(req:Request,res:Response) => {
-    var params = req.body 
+user.post('/postUser',rateLimiter,(req:Request,res:Response) => {
+    var params = xss(req.body) 
     var hash = bcrypt.hashSync(req.body.Password, salt)
     var dados = new userModels(
         nanoid(),
@@ -104,8 +112,8 @@ user.post('/postUser',(req:Request,res:Response) => {
     //res.send(params)
 })
 
-user.post('/loginUser', (req:Request, res:Response) => {
-    var params = req.body
+user.post('/loginUser',rateLimiter, (req:Request, res:Response) => {
+    var params = xss(req.body)
     let query = `Select * from users where email = ?`
     sqlconn.query (query, [
         params.Email
@@ -143,11 +151,11 @@ user.post('/loginUser', (req:Request, res:Response) => {
        
 })
 
-user.post("/getUserById", authenticateToken,  (req:Request, res:Response) => {
-    console.log(req.query)
+user.post("/getUserById",rateLimiter, authenticateToken,  (req:Request, res:Response) => {
+    // console.log(req.query)
     let query = `Select * From users where id = ?`
     sqlconn.query(query, [
-        req.query.id
+        xss(req.query.id)
     ], (err: any, rows:any) => {
         if(!err) {
             delete rows[0].password
@@ -158,8 +166,8 @@ user.post("/getUserById", authenticateToken,  (req:Request, res:Response) => {
     })
 })
 
-user.put("/putTerms", authenticateToken, (req:Request, res:Response) => {
-    let id = req.query.id
+user.put("/putTerms",rateLimiter, authenticateToken, (req:Request, res:Response) => {
+    let id = xss(req.query.id)
     let boo = req.query.bool == "true" ? 1 : 0 
     let query = `UPDATE users SET terms = '?' WHERE id = ?`
     sqlconn.query(query, [
@@ -184,7 +192,7 @@ function authenticateToken(req:Request, res:Response, next:any) {
     }
 
     jwt.verify(token, process.env.TOKEN as string, (err: any, user: any) => {
-        console.log(err);
+        // console.log(err);
         if(err) 
             return res.status(403).json({msg: "Failed to authenticate token."});
             
@@ -197,8 +205,8 @@ function authenticateToken(req:Request, res:Response, next:any) {
 
 user.post("/uploadProfilePick", upload.single("photo"), (req:Request, res:Response) => {
     let query = 'update users set photo = ? where id = ?'
-    console.log(req.body)
-    console.log(profilePath)
+    // console.log(req.body)
+    // console.log(profilePath)
     sqlconn.query(query, [
         profilePath, req.body.id
     ],(err: any, rows: any) => {

@@ -7,7 +7,10 @@ import { feedModels } from '../models/feed_models';
 import { nanoid } from 'nanoid';
 
 const mysql = require('mysql2')
-dotenv.config({ path: __dirname+'/./../.env' });
+dotenv.config({ path: __dirname+'/./../.env' })
+const jwt = require('jsonwebtoken')
+const RateLimit = require('express-rate-limit');
+const xss = require('xss-clean');
 
 var sqlconn = mysql.createConnection({
     host: process.env.HOST,
@@ -16,6 +19,12 @@ var sqlconn = mysql.createConnection({
     database: process.env.DB,
     multipleStatements: true
 })
+
+var rateLimiter = new RateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 100, // limit each IP to 100 requests per windowMs
+    delayMs: 0 // disable delaying - full speed until the max limit is reached
+  });
 
 var profilePath: any[] = [];
 var feedId = nanoid();
@@ -41,8 +50,8 @@ const upload = multer({storage})
 export const feed = Router();
 
 
-feed.get('/getFeed', (req:Request, res:Response) => {
-    console.log(req.query)
+feed.get('/getFeed',rateLimiter, (req:Request, res:Response) => {
+    // console.log(req.query)
     let query = `SELECT feed.*, users.name, users.email FROM feed LEFT JOIN users ON feed.userId = users.id`
     sqlconn.query(query, 
         (err: any, rows:any) => {
@@ -54,8 +63,8 @@ feed.get('/getFeed', (req:Request, res:Response) => {
     })
 })
 
-feed.get('/getFeedById', (req:Request, res:Response) => {
-    console.log(req.query)
+feed.get('/getFeedById',rateLimiter, (req:Request, res:Response) => {
+    //console.log(req.query)
     let query = `SELECT feed.*, users.name, users.email FROM feed LEFT JOIN users ON feed.userId = users.id where feed.feedId = ?`
     sqlconn.query(query,[
         req.query.id
@@ -73,10 +82,10 @@ feed.get('/getFeedById', (req:Request, res:Response) => {
     })
 })
 
-feed.post("/postFeed", upload.any(), (req:Request, res:Response) => {
+feed.post("/postFeed",rateLimiter, upload.any(), (req:Request, res:Response) => {
     let query = 'insert into feed (`feedId`, `title`, `text`, `like`, `deslike`, `userId`, `imgs`) values (?, ?, ?, ?, ?, ?, ?) '
-    console.log(req.body)
-    console.log(req.files)
+    //console.log(req.body)
+    //console.log(req.files)
     var data = new feedModels(feedId,
         req.body.Title,
         req.body.Text,
@@ -109,3 +118,23 @@ feed.post("/postFeed", upload.any(), (req:Request, res:Response) => {
         }
     })
 })
+
+
+function authenticateToken(req:Request, res:Response, next:any) {
+    const token = req.headers['x-authorization'];
+
+    if(token == null) {
+        return res.status(401).json({msg: "No token provided."});
+    }
+
+    jwt.verify(token, process.env.TOKEN as string, (err: any, user: any) => {
+        // console.log(err);
+        if(err) 
+            return res.status(403).json({msg: "Failed to authenticate token."});
+            
+            next();
+        
+    })
+
+    
+}
