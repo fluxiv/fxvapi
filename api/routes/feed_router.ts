@@ -10,7 +10,6 @@ const mysql = require('mysql2')
 dotenv.config({ path: __dirname+'/./../.env' })
 const jwt = require('jsonwebtoken')
 const RateLimit = require('express-rate-limit');
-const xss = require('xss-clean');
 
 var sqlconn = mysql.createConnection({
     host: process.env.HOST,

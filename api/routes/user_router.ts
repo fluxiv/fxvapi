@@ -8,7 +8,6 @@ import fs from 'fs';
 const mysql = require('mysql2')
 dotenv.config({ path: __dirname+'/./../.env' });
 const RateLimit = require('express-rate-limit');
-const xss = require('xss-clean');
 
 // require("dotenv").config({
 //     allowEmptyValues: true
@@ -56,7 +55,7 @@ var salt = bcrypt.genSaltSync(10)
 
 
 user.post('/postUser',rateLimiter,(req:Request,res:Response) => {
-    var params = xss(req.body) 
+    var params = req.body
     var hash = bcrypt.hashSync(req.body.Password, salt)
     var dados = new userModels(
         nanoid(),
@@ -156,7 +155,7 @@ user.post("/getUserById",rateLimiter, authenticateToken,  (req:Request, res:Resp
     // console.log(req.query)
     let query = `Select * From users where id = ?`
     sqlconn.query(query, [
-        xss(req.query.id)
+        req.query.id
     ], (err: any, rows:any) => {
         if(!err) {
             delete rows[0].password
@@ -168,7 +167,7 @@ user.post("/getUserById",rateLimiter, authenticateToken,  (req:Request, res:Resp
 })
 
 user.put("/putTerms",rateLimiter, authenticateToken, (req:Request, res:Response) => {
-    let id = xss(req.query.id)
+    let id = req.query.id
     let boo = req.query.bool == "true" ? 1 : 0 
     let query = `UPDATE users SET terms = '?' WHERE id = ?`
     sqlconn.query(query, [

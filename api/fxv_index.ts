@@ -5,12 +5,12 @@ import express from 'express'
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname+'/.env' });
 import { Request, Response } from 'express';
-
+const xss = require('xss-clean');
 const app = express();
 
 const cors = require('cors')
 const mysql = require('mysql2')
-app.use(cors())
+app.use(cors(),xss())
 app.use(express.json())
 
 
