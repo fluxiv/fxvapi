@@ -20,7 +20,7 @@ var sqlconn = mysql.createConnection({
     multipleStatements: true
 })
 
-var rateLimiter = new RateLimit({
+var rateLimiter = RateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 100, // limit each IP to 100 requests per windowMs
     delayMs: 0 // disable delaying - full speed until the max limit is reached
