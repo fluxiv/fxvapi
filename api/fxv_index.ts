@@ -43,9 +43,9 @@ app.get('/',(req:Request,res:Response) => {
 const defaultImage = "uploads/default/avatar-image.jpg"
 app.get('/getImage', function(req:Request, res:Response){
     let image: any = req.query.photo
-    res.sendFile(image, {root:'.'}, function(err: any){
+    res.sendFile(image, {root:'./'}, function(err: any){
         if(err) {
-            res.sendFile(defaultImage, {root:'.'})
+            res.sendFile(defaultImage, {root:'./'})
         }
     }) ;
 }); 
