@@ -5,8 +5,10 @@ import express from 'express'
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname+'/.env' });
 import { Request, Response } from 'express';
+import swaggerUI from 'swagger-ui-express'
 const xss = require('xss-clean');
 const app = express();
+import swaggerjson from './swagger.json'
 
 const cors = require('cors')
 const mysql = require('mysql2')
@@ -49,5 +51,6 @@ app.get('/getImage', function(req:Request, res:Response){
         }
     }) ;
 }); 
+app.use('/docs',swaggerUI.serve,swaggerUI.setup(swaggerjson))
 app.use('/user',user)
 app.use('/feed',feed)

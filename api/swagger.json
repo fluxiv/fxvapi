@@ -1,0 +1,48 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "FLUXIV API",
+        "summary": "This api will be used for every Fluxiv service",
+        "license": {
+             "name": "GPLv3",
+             "url": "https://www.gnu.org/licenses/quick-guide-gplv3.html"
+        },
+        "version": "0.10"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:4040/",
+            "description": "API em local"
+        }
+    ],
+    "paths": {
+        "/getImage": {
+            "get": {
+                "summary": "return images",
+                "description": "return any image stored in API",
+                "tags": ["User","Images"],
+                "parameters": [
+                    {                    
+                        "name": "photo",
+                        "in" : "query",
+                        "description": "Path to file image",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "content": {
+                            "image/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "/uploads/default/avatar-image.jpg"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
