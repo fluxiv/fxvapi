@@ -1,4 +1,31 @@
 {
+    "components": {
+        "schemas": {
+            "postUser" : {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "birthday": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "isPremium": {
+                        "type": "number"
+                    },
+                    "terms": {
+                        "type":"number"
+                    }
+                }
+            }
+        }
+    },
     "openapi": "3.0.0",
     "info": {
         "title": "FLUXIV API",
@@ -9,6 +36,7 @@
         },
         "version": "0.10"
     },
+
     "servers": [
         {
             "url": "http://localhost:4040/",
@@ -20,7 +48,7 @@
             "get": {
                 "summary": "return images",
                 "description": "return any image stored in API",
-                "tags": ["User","Images"],
+                "tags": ["User"],
                 "parameters": [
                     {                    
                         "name": "photo",
@@ -41,6 +69,50 @@
                             }
                         }
                     }
+                }
+            }
+        },
+        "/postUser": {
+            "post": {
+                "summary": "User registration",
+                "description": "This route will be responsible for registering a new user",
+                "tags": ["User"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/postUser"
+                            }
+                        }
+                    }
+                },
+                "examples": {
+                    "postUser": {
+                        "value":{
+                            "name": "Igor Suzart",
+                            "email": "igorsuzart@fluxiv.com",
+                            "password": "T3ste#1234",
+                            "isPremium": "0",
+                            "birthday": "08/05/1998",
+                            "terms": "0"
+                        }
+                    }
+                },
+                "201": {
+                    "description": "ok",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "items": {
+                                    "$ref": "#/components/schemas/postUser"
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "description": "error!"
                 }
             }
         }
