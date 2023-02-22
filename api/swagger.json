@@ -86,32 +86,48 @@
                         }
                     }
                 },
-                "examples": {
-                    "postUser": {
-                        "value":{
-                            "Name": "Igor Suzart",
-                            "Birthday": "08/05/1998",
-                            "Email": "igorsuzart@fluxiv.com",
-                            "Password": "T3ste#1234",
-                            "isPremium": "0",
-                            "terms": "0"
-                        }
-                    }
-                },
                 "responses":{
                     "201": {
                         "description": "ok",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
                                     "$ref": "#/components/schemas/postUser"
+                                },
+                                "examples": {
+                                    "postUser": {
+                                        "value": {
+                                            "Name": "Igor Suzart",
+                                            "Birthday": "08/05/1998",
+                                            "Email": "igorsuzart@fluxiv.com",
+                                            "Password": "T3ste#1234",
+                                            "isPremium": "0",
+                                            "terms": "0"
+                                        }
+                                    }
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "error!"
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "An error message."
+                                        },
+                                        "error": {
+                                            "type": "object",
+                                            "description": "The error object."
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -173,6 +189,84 @@
                     }
                 }
             }
-        }
+        },
+            "/user/getUserById": {
+              "post": {
+                "summary": "Get user by ID",
+                "tags": [
+                  "user"
+                ],
+                "parameters": [
+                  {
+                    "in": "query",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    },
+                    "description": "The ID of the user to retrieve"
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Successful operation",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "msg": {
+                              "type": "string",
+                              "description": "A message indicating the success of the operation"
+                            },
+                            "data": {
+                              "type": "object",
+                              "description": "The user object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "description": "The unique ID of the user",
+                                  "example": "QXK70hZn_4VnM8mWIOhcJ"
+                                },
+                                "username": {
+                                  "type": "string",
+                                  "description": "The username of the user",
+                                  "example": "johndoe"
+                                },
+                                "email": {
+                                  "type": "string",
+                                  "description": "The email of the user",
+                                  "example": "johndoe@example.com"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "400": {
+                    "description": "Bad request",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "msg": {
+                              "type": "string",
+                              "description": "A message indicating the failure of the operation"
+                            },
+                            "error": {
+                              "type": "string",
+                              "description": "A description of the error"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
     }
 }
