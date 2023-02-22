@@ -4,16 +4,16 @@
             "postUser" : {
                 "type": "object",
                 "properties": {
-                    "name": {
+                    "Name": {
                         "type": "string"
                     },
-                    "birthday": {
+                    "Birthday": {
                         "type": "string"
                     },
-                    "email": {
+                    "Email": {
                         "type": "string"
                     },
-                    "password": {
+                    "Password": {
                         "type": "string"
                     },
                     "isPremium": {
@@ -72,7 +72,7 @@
                 }
             }
         },
-        "/postUser": {
+        "/user/postUser": {
             "post": {
                 "summary": "User registration",
                 "description": "This route will be responsible for registering a new user",
@@ -89,10 +89,10 @@
                 "examples": {
                     "postUser": {
                         "value":{
-                            "name": "Igor Suzart",
-                            "birthday": "08/05/1998",
-                            "email": "igorsuzart@fluxiv.com",
-                            "password": "T3ste#1234",
+                            "Name": "Igor Suzart",
+                            "Birthday": "08/05/1998",
+                            "Email": "igorsuzart@fluxiv.com",
+                            "Password": "T3ste#1234",
                             "isPremium": "0",
                             "terms": "0"
                         }
