@@ -90,29 +90,87 @@
                     "postUser": {
                         "value":{
                             "name": "Igor Suzart",
+                            "birthday": "08/05/1998",
                             "email": "igorsuzart@fluxiv.com",
                             "password": "T3ste#1234",
                             "isPremium": "0",
-                            "birthday": "08/05/1998",
                             "terms": "0"
                         }
                     }
                 },
-                "201": {
+                "responses":{
+                    "201": {
+                        "description": "ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/postUser"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "error!"
+                    }
+                }
+            }
+        },
+        "/loginUser": {
+            "post":{
+                "summary": "Login user",
+                "description": "This route is responsible for user login",
+                "tags": ["User"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type":"object",
+                                "properties":{
+                                    "email":{
+                                        "type":"string"
+                                    },
+                                    "password":{
+                                        "type":"string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "example":{
+                "loginUser": {
+                    "value":{
+                        "email": "igorsuzart@fluxiv.com",
+                        "password":"T3ste#1234"
+                    }
+                }
+            },
+            "responses":{
+                "404": {
+                    "description": "Email not found!"
+                },
+                "401": {
+                    "description": "Error, password not match!"
+                },
+                "200": {
                     "description": "ok",
                     "content": {
                         "application/json": {
                             "schema": {
                                 "type": "object",
-                                "items": {
-                                    "$ref": "#/components/schemas/postUser"
+                                "properties":{
+                                    "email":{
+                                        "type":"string"
+                                    },
+                                    "password":{
+                                        "type":"string"
+                                    }
                                 }
                             }
                         }
                     }
-                },
-                "400": {
-                    "description": "error!"
                 }
             }
         }
