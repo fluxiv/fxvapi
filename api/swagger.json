@@ -24,7 +24,53 @@
                     }
                 }
             }
+        },
+        "securitySchemes": {
+          "bearerAuth": {
+            "type": "apiKey",
+            "name": "x-authorization",
+            "in": "header"      
+          }
         }
+    },
+    
+    "definitions": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "UserLogin" : {
+        "type": "object",
+        "properties": {
+          "Email": {
+            "type": "string"
+          },
+          "Password": {
+            "type": "string"
+          }
+        }
+      }
     },
     "openapi": "3.0.0",
     "info": {
@@ -45,7 +91,7 @@
     "securityDefinitions": {
       "Bearer": {
         "type": "apiKey",
-        "name": "Authorization",
+        "name": "x-authorization",
         "in": "header"
       }
     },
@@ -153,16 +199,15 @@
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
+                "requestBody": {
+                  "content": {
+                    "application/json":{
+                      "schema": {
+                        "$ref":"#/definitions/UserLogin"
+                      }
                     }
-                ],
+                  }
+                },
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -172,15 +217,15 @@
         },
             
         "/user/getUserById": {
-            "get": {
+            "post": {
               "summary": "Get user by ID",
               "description": "Retrieves a user by ID",
               "tags":["User"],
               "security": [
                 {
-                  "Bearer": []
+                    "bearerAuth": []
                 }
-              ],
+            ],
               "parameters": [
                 {
                   "name": "id",
@@ -193,7 +238,7 @@
                 "200": {
                   "description": "OK",
                   "schema": {
-                    "$ref": "#/definitions/User"
+                    "$ref": "#/components/schemas/postUser"
                   }
                 },
                 "400": {
@@ -240,14 +285,19 @@
                 }
             },
 
-            "/putTerms": {
+            "/user/putTerms": {
                 "put": {
                     "description": "Updates the terms of a given user",
+                    "tags":["User"],
+                    "security": [
+                      {
+                          "bearerAuth": []
+                      }
+                  ],
                     "parameters": [
                         {
                             "name": "id",
                             "description": "Unique user ID",
-                            "tags":["User"],
                             "in": "query",
                             "required": true,
                             "type": "integer"

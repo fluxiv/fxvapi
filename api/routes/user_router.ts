@@ -113,7 +113,7 @@ user.post('/postUser',rateLimiter,(req:Request,res:Response) => {
 
 user.post('/loginUser',rateLimiter, (req:Request, res:Response) => {
     var params = req.body
-    console.log(params)
+    //console.log(params)
     let query = `Select * from users where email = ?`
     sqlconn.query (query, [
         params.Email
@@ -186,6 +186,7 @@ function generateAccessToken(param: string) {
 
 function authenticateToken(req:Request, res:Response, next:any) {
     const token = req.headers['x-authorization'];
+    //console.log(req.headers)
 
     if(token == null) {
         return res.status(401).json({msg: "No token provided."});

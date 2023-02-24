@@ -7,7 +7,15 @@ dotenv.config({ path: __dirname+'/.env' });
 import { Request, Response } from 'express';
 import swaggerUI from 'swagger-ui-express'
 const xss = require('xss-clean');
+const bodyParser = require('body-parser');
+
 const app = express();
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 import swaggerjson from './swagger.json'
 
 const cors = require('cors')
@@ -26,8 +34,11 @@ var sql = mysql.createConnection({
 
 sql.connect((err:any)=>{
     if(!err){
-        console.log('API FXV CONNECTED');
-        console.log(`Run FXV api on http://localhost:${process.env.PORT}`)
+        var datetime = new Date();
+        console.log(`running at: ${datetime}`);    
+
+        console.log(`FXV api on http://localhost:${process.env.PORT}`)
+
     }
     else{
         console.log(err);
