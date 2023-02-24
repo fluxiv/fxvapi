@@ -37,6 +37,19 @@
         "version": "0.10"
     },
 
+    "basePath": "/api",
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "securityDefinitions": {
+      "Bearer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+
     "servers": [
         {
             "url": "http://localhost:4040/",
@@ -132,141 +145,130 @@
                 }
             }
         },
-        "/loginUser": {
-            "post":{
+        "/user/loginUser": {
+            "post": {
                 "summary": "Login user",
-                "description": "This route is responsible for user login",
-                "tags": ["User"],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type":"object",
-                                "properties":{
-                                    "email":{
-                                        "type":"string"
-                                    },
-                                    "password":{
-                                        "type":"string"
-                                    }
-                                }
-                            }
+                "description": "Login user",
+                "tags":["User"],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/User"
                         }
                     }
-                }
-            },
-            "example":{
-                "loginUser": {
-                    "value":{
-                        "email": "igorsuzart@fluxiv.com",
-                        "password":"T3ste#1234"
-                    }
-                }
-            },
-            "responses":{
-                "404": {
-                    "description": "Email not found!"
-                },
-                "401": {
-                    "description": "Error, password not match!"
-                },
-                "200": {
-                    "description": "ok",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties":{
-                                    "email":{
-                                        "type":"string"
-                                    },
-                                    "password":{
-                                        "type":"string"
-                                    }
-                                }
-                            }
-                        }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
         },
-            "/user/getUserById": {
-              "post": {
-                "summary": "Get user by ID",
-                "tags": [
-                  "user"
-                ],
-                "parameters": [
-                  {
-                    "in": "query",
-                    "name": "id",
-                    "required": true,
-                    "schema": {
-                      "type": "string"
-                    },
-                    "description": "The ID of the user to retrieve"
+            
+        "/user/getUserById": {
+            "get": {
+              "summary": "Get user by ID",
+              "description": "Retrieves a user by ID",
+              "tags":["User"],
+              "security": [
+                {
+                  "Bearer": []
+                }
+              ],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "query",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "$ref": "#/definitions/User"
                   }
-                ],
-                "responses": {
-                  "200": {
-                    "description": "Successful operation",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "object",
-                          "properties": {
-                            "msg": {
-                              "type": "string",
-                              "description": "A message indicating the success of the operation"
-                            },
-                            "data": {
-                              "type": "object",
-                              "description": "The user object",
-                              "properties": {
-                                "id": {
-                                  "type": "string",
-                                  "description": "The unique ID of the user",
-                                  "example": "QXK70hZn_4VnM8mWIOhcJ"
-                                },
-                                "username": {
-                                  "type": "string",
-                                  "description": "The username of the user",
-                                  "example": "johndoe"
-                                },
-                                "email": {
-                                  "type": "string",
-                                  "description": "The email of the user",
-                                  "example": "johndoe@example.com"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "400": {
-                    "description": "Bad request",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "object",
-                          "properties": {
-                            "msg": {
-                              "type": "string",
-                              "description": "A message indicating the failure of the operation"
-                            },
-                            "error": {
-                              "type": "string",
-                              "description": "A description of the error"
-                            }
-                          }
-                        }
-                      }
-                    }
+                },
+                "400": {
+                  "description": "Bad Request",
+                  "schema": {
+                    "$ref": "#/definitions/Error"
+                  }
+                },
+                "401": {
+                  "description": "Unauthorized",
+                  "schema": {
+                    "$ref": "#/definitions/Error"
                   }
                 }
               }
+            }
+          },
+        
+            "definitions": {
+                "User": {
+                    "type": "object",
+                    "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    }
+                    }
+                },
+                "Error": {
+                    "type": "object",
+                    "properties": {
+                    "msg": {
+                        "type": "string"
+                    },
+                    "error": {
+                        "type": "string"
+                    }
+                    }
+                }
+            },
+
+            "/putTerms": {
+                "put": {
+                    "description": "Updates the terms of a given user",
+                    "parameters": [
+                        {
+                            "name": "id",
+                            "description": "Unique user ID",
+                            "tags":["User"],
+                            "in": "query",
+                            "required": true,
+                            "type": "integer"
+                        },
+                        {
+                            "name": "bool",
+                            "description": "Boolean value of the terms",
+                            "in": "query",
+                            "required": true,
+                            "type": "boolean"
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "OK"
+                        },
+                        "400": {
+                            "description": "Bad Request"
+                        }
+                    }
+                }
             }
     }
 }
