@@ -81,7 +81,7 @@ feed.get('/getFeedById',rateLimiter, (req:Request, res:Response) => {
     })
 })
 
-feed.post("/postFeed",rateLimiter, upload.any(), (req:Request, res:Response) => {
+feed.post("/postFeed",rateLimiter, authenticateToken, upload.any(), (req:Request, res:Response) => {
     let query = 'insert into feed (`feedId`, `title`, `text`, `like`, `deslike`, `userId`, `imgs`) values (?, ?, ?, ?, ?, ?, ?) '
     //console.log(req.body)
     //console.log(req.files)

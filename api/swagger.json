@@ -25,6 +25,26 @@
                 }
             }
         },
+        "postFeed":{
+          "Title": {
+            "type":"string"
+          },
+          "Text": {
+            "type":"string"
+          },
+          "Like": {
+            "type":"string"
+          },
+          "Deslike": {
+            "type":"string"
+          },
+          "Imgs": {
+            "type":"string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
         "securitySchemes": {
           "bearerAuth": {
             "type": "apiKey",
@@ -254,6 +274,78 @@
                   }
                 }
               }
+            }
+          },
+        
+          "/feed/getFeed": {
+            "get":{
+              "summary": "return feed",
+              "description": "Retrieves a feed",
+              "tags": ["Feed"],
+              "responses": {
+                "200":{
+                  "description": "Ok!"
+                },
+                "400":{
+                  "description": "Error!"
+                }
+              }
+            }
+          },
+
+          "/feed/getFeedById": {
+            "get":{
+              "summary": "return feed by id",
+              "description": "Retrieves a feed by id",
+              "tags": ["Feed"],
+              "parameters":[
+                  { "name": "id",
+                    "in": "query",
+                    "required": true,
+                    "type": "string"
+                  }
+              ],
+              "responses": {
+                "200":{
+                  "description": "Ok!"
+                },
+                "400":{
+                  "description": "Error!"
+                },
+                "404": {
+                  "description": "Error, not found!"
+                }
+              }
+            }
+          },
+
+          "feed/postFeed": {
+            "post":{
+              "summary": "Feed post",
+                "description": "This route will be responsible for a post in feed",
+                "tags": ["Feed"],
+                "security": [
+                  {
+                      "bearerAuth": []
+                  }
+              ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/postFeed"
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                  "201": {
+                    "description":"Ok!"
+                  },
+                  "400": {
+                    "description":"Error!"
+                  }
+                }
             }
           },
         
